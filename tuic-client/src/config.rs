@@ -110,6 +110,8 @@ pub struct Relay {
         deserialize_with = "deserialize_duration"
     )]
     pub gc_lifetime: Duration,
+
+    pub bind_ip: Option<IpAddr>,
 }
 
 #[derive(Deserialize)]

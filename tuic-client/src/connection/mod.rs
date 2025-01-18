@@ -89,11 +89,16 @@ impl Connection {
         config.transport_config(Arc::new(tp_cfg));
 
         // Try to create an IPv4 socket as the placeholder first, if it fails, try IPv6.
-        let socket = UdpSocket::bind(SocketAddr::from((Ipv4Addr::UNSPECIFIED, 0)))
+        let socket = if cfg.bind_ip.is_some() {
+            UdpSocket::bind(SocketAddr::new(cfg.bind_ip.unwrap(), 0))
+            .map_err(|err| Error::Socket("failed to create endpoint UDP socket", err))?
+        } else {
+            UdpSocket::bind(SocketAddr::from((Ipv4Addr::UNSPECIFIED, 0)))
             .or_else(|err| {
                 UdpSocket::bind(SocketAddr::from((Ipv6Addr::UNSPECIFIED, 0))).map_err(|_| err)
             })
-            .map_err(|err| Error::Socket("failed to create endpoint UDP socket", err))?;
+            .map_err(|err| Error::Socket("failed to create endpoint UDP socket", err))?
+        };
 
         let mut ep = QuinnEndpoint::new(
             EndpointConfig::default(),
