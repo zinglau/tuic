@@ -112,6 +112,12 @@ jobs:
             cross: true
             file-ext:
 
+          - arch-name: mipsel-unknown-linux-musl
+            os: ubuntu-latest
+            target: mipsel-unknown-linux-musl
+            cross: true
+            file-ext:
+
     runs-on: ${{ matrix.os }}
 
     steps:
